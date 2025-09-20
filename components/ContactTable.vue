@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <!-- Search and Filter Controls -->
-    <div class="bg-white p-4 rounded-lg shadow-sm border">
+    <div class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100/60">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Search Input -->
         <div>
@@ -13,7 +13,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search by name, email, business..."
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:border-aggie-500 transition-all duration-200 hover:border-gray-300"
           />
         </div>
 
@@ -25,7 +25,7 @@
           <select
             id="contact-type-filter"
             v-model="selectedContactType"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:border-aggie-500 transition-all duration-200 hover:border-gray-300"
           >
             <option value="">All Types</option>
             <option value="Alumni">Alumni</option>
@@ -42,7 +42,7 @@
           <select
             id="business-sector-filter"
             v-model="selectedBusinessSector"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:border-aggie-500 transition-all duration-200 hover:border-gray-300"
           >
             <option value="">All Sectors</option>
             <option v-for="sector in uniqueBusinessSectors" :key="sector" :value="sector">
@@ -56,7 +56,7 @@
       <div class="mt-4 flex justify-end">
         <button
           @click="clearFilters"
-          class="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 underline"
+          class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-aggie-700 hover:bg-aggie-50 rounded-lg transition-all duration-200"
         >
           Clear Filters
         </button>
@@ -84,7 +84,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white shadow-sm rounded-lg border overflow-hidden">
+    <div class="bg-white shadow-soft rounded-2xl border border-gray-100/60 overflow-hidden">
       <!-- Loading State -->
       <div v-if="loading" class="p-6">
         <LoadingSkeleton type="table" :rows="5" :columns="7" />
@@ -92,16 +92,16 @@
       
       <!-- Table Content -->
       <div v-else class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-gray-100">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100/50">
             <tr>
               <th
                 v-for="column in columns"
                 :key="column.key"
                 @click="column.sortable ? handleSort(column.key) : null"
                 :class="[
-                  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                  column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
+                  'px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider',
+                  column.sortable ? 'cursor-pointer hover:bg-gray-100 transition-colors duration-200' : ''
                 ]"
               >
                 <div class="flex items-center space-x-1">
@@ -130,12 +130,12 @@
                   </div>
                 </div>
               </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody class="bg-white divide-y divide-gray-100">
             <tr v-if="paginatedContacts.length === 0 && !loading">
               <td :colspan="columns.length + 1" class="px-6 py-12 text-center text-gray-500">
                 <div class="flex flex-col items-center">
@@ -147,9 +147,15 @@
                 </div>
               </td>
             </tr>
-            <tr v-for="contact in paginatedContacts" :key="contact.id" class="hover:bg-gray-50">
+            <tr v-for="contact in paginatedContacts" :key="contact.id" class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-aggie-50/20 transition-all duration-200 group">
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ contact.name }}</div>
+                <button
+                  @click="handleView(contact)"
+                  class="text-left text-base font-semibold text-gray-900 hover:text-aggie-600 hover:underline transition-all duration-200 cursor-pointer group-hover:text-aggie-600 rounded-lg px-2 py-1 -mx-2 -my-1 hover:bg-aggie-50"
+                  :title="`View ${contact.name}'s details`"
+                >
+                  {{ contact.name }}
+                </button>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{{ contact.email }}</div>
@@ -201,10 +207,10 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div class="flex justify-end space-x-2">
-                  <!-- View Button - Always visible -->
+                  <!-- View Button - Always visible (but less prominent since name is clickable) -->
                   <button
                     @click="handleView(contact)"
-                    class="text-blue-600 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50"
+                    class="text-gray-500 hover:text-aggie-600 px-2 py-2 rounded-lg hover:bg-aggie-50 transition-all duration-200 opacity-60 group-hover:opacity-100"
                     title="View contact details"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,7 +223,7 @@
                   <button
                     v-if="canEdit"
                     @click="handleEdit(contact)"
-                    class="text-indigo-600 hover:text-indigo-900 px-2 py-1 rounded hover:bg-indigo-50"
+                    class="text-gray-500 hover:text-blue-600 px-2 py-2 rounded-lg hover:bg-blue-50 transition-all duration-200 opacity-60 group-hover:opacity-100"
                     title="Edit contact"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,7 +235,7 @@
                   <button
                     v-if="canDelete"
                     @click="handleDelete(contact)"
-                    class="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50"
+                    class="text-gray-500 hover:text-red-600 px-2 py-2 rounded-lg hover:bg-red-50 transition-all duration-200 opacity-60 group-hover:opacity-100"
                     title="Delete contact"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,7 +259,7 @@
         <button
           @click="goToPage(currentPage - 1)"
           :disabled="currentPage === 1"
-          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-4 py-2 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-soft"
         >
           Previous
         </button>
@@ -263,10 +269,10 @@
             v-if="page !== '...'"
             @click="goToPage(page as number)"
             :class="[
-              'px-3 py-2 text-sm font-medium rounded-md',
+              'px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 shadow-soft',
               currentPage === page
-                ? 'text-white bg-blue-600 border border-blue-600'
-                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                ? 'text-white bg-gradient-to-r from-aggie-600 to-aggie-700 border border-aggie-600 shadow-medium'
+                : 'text-gray-600 bg-white border border-gray-200 hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700'
             ]"
           >
             {{ page }}
@@ -277,7 +283,7 @@
         <button
           @click="goToPage(currentPage + 1)"
           :disabled="currentPage === totalPages"
-          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-4 py-2 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-soft"
         >
           Next
         </button>

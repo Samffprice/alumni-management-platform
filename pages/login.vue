@@ -1,60 +1,88 @@
 <template>
   <div class="space-y-6">
-    <div class="text-center">
-      <h2 class="text-2xl font-bold text-gray-900">
-        Sign in to your account
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">
+        Welcome back
       </h2>
-      <p class="mt-2 text-sm text-gray-600">
-        Access the Alumni Network
+      <p class="text-base text-gray-600">
+        Sign in to access the Alumni Network
       </p>
     </div>
     
     <form class="space-y-6" @submit.prevent="handleLogin">
-        <div class="rounded-md shadow-sm -space-y-px">
+        <div class="space-y-4">
           <div>
-            <label for="email" class="sr-only">Email address</label>
-            <input
-              id="email"
-              v-model="form.email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              :class="getFieldClasses('email')"
-              placeholder="Email address"
-              @blur="validateField('email')"
-              @input="clearFieldError('email')"
-            />
-            <div v-if="errors.email" class="mt-1 text-sm text-red-600">
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email address</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>
+              <input
+                id="email"
+                v-model="form.email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="block w-full pl-10 pr-3 py-3 border rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:border-aggie-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                :class="getFieldClasses('email')"
+                placeholder="Enter your email address"
+                @blur="validateField('email')"
+                @input="clearFieldError('email')"
+              />
+            </div>
+            <div v-if="errors.email" class="mt-2 text-sm text-red-600 flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               {{ errors.email }}
             </div>
           </div>
           
           <div>
-            <label for="password" class="sr-only">Password</label>
-            <input
-              id="password"
-              v-model="form.password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              :class="getFieldClasses('password')"
-              placeholder="Password"
-              @blur="validateField('password')"
-              @input="clearFieldError('password')"
-            />
-            <div v-if="errors.password" class="mt-1 text-sm text-red-600">
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <input
+                id="password"
+                v-model="form.password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="block w-full pl-10 pr-3 py-3 border rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:border-aggie-500 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                :class="getFieldClasses('password')"
+                placeholder="Enter your password"
+                @blur="validateField('password')"
+                @input="clearFieldError('password')"
+              />
+            </div>
+            <div v-if="errors.password" class="mt-2 text-sm text-red-600 flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               {{ errors.password }}
             </div>
           </div>
         </div>
 
-        <div v-if="generalError" class="rounded-md bg-red-50 p-4">
-          <div class="text-sm text-red-700">
-            {{ generalError }}
+        <div v-if="generalError" class="rounded-xl bg-red-50 border border-red-200 p-4">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-red-800">Sign in failed</p>
+              <p class="text-sm text-red-700 mt-1">{{ generalError }}</p>
+            </div>
           </div>
         </div>
 
@@ -62,23 +90,25 @@
           <button
             type="submit"
             :disabled="isSubmitting || !isFormValid"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-aggie-600 to-aggie-700 hover:from-aggie-700 hover:to-aggie-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-soft hover:shadow-medium"
           >
             <span v-if="isSubmitting" class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <svg class="animate-spin h-5 w-5 text-indigo-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+            </span>
+            <span v-else class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <svg class="h-5 w-5 text-aggie-300 group-hover:text-aggie-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
             </span>
-            {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+            {{ isSubmitting ? 'Signing in...' : 'Sign in to your account' }}
           </button>
         </div>
 
         <div class="text-center">
           <p class="text-sm text-gray-600">
             Don't have an account?
-            <NuxtLink to="/signup" class="font-medium text-indigo-600 hover:text-indigo-500">
-              Sign up
+            <NuxtLink to="/signup" class="font-semibold text-aggie-600 hover:text-aggie-700 transition-colors duration-200">
+              Create one here
             </NuxtLink>
           </p>
         </div>
@@ -157,9 +187,9 @@ const clearFieldError = (field: string) => {
 // Get field CSS classes
 const getFieldClasses = (field: string) => {
   if (errors[field]) {
-    return 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+    return 'border-red-300 bg-red-50 text-red-900 placeholder-red-400 focus:ring-red-500 focus:border-red-500'
   }
-  return 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+  return 'border-gray-200 bg-white hover:border-gray-300 focus:ring-aggie-500 focus:border-aggie-500'
 }
 
 // Form validation
@@ -209,13 +239,34 @@ const handleLogin = async () => {
     }
     
     if (data.user && data.session) {
+      // Try to fetch full name from user_profiles table
+      let fullName = data.user.app_metadata?.full_name
+      
+      if (!fullName) {
+        try {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('user_id', data.user.id)
+            .single()
+          
+          if (profile?.full_name) {
+            fullName = profile.full_name
+          }
+        } catch (profileError) {
+          // Profile fetch failed, continue without full name
+          console.warn('Could not fetch user profile during login:', profileError)
+        }
+      }
+
       // Update Pinia store with user data
       const user: User = {
         id: data.user.id,
         email: data.user.email || '',
         app_metadata: {
           role: data.user.app_metadata?.role || 'member',
-          is_approved: data.user.app_metadata?.is_approved || false
+          is_approved: data.user.app_metadata?.is_approved || false,
+          full_name: fullName
         }
       }
       

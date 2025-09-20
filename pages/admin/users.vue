@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Page Header -->
-    <div class="bg-white shadow">
+    <div class="bg-white/95 backdrop-blur-sm shadow-soft border-b border-gray-100/60">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-6">
+        <div class="py-8">
           <div class="flex items-center justify-between">
             <div>
               <nav class="flex" aria-label="Breadcrumb">
@@ -51,7 +51,7 @@
               <button
                 @click="refreshUsers"
                 :disabled="refreshing"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                class="inline-flex items-center px-6 py-3 border border-gray-200 rounded-xl shadow-soft text-sm font-semibold text-gray-700 bg-white hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-medium"
               >
                 <svg 
                   :class="['h-4 w-4 mr-2', refreshing ? 'animate-spin' : '']" 
@@ -71,6 +71,18 @@
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Back Button -->
+      <div class="mb-6">
+        <NuxtLink
+          to="/dashboard"
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-aggie-700 bg-white hover:bg-aggie-50 border border-gray-200 hover:border-aggie-200 rounded-xl shadow-soft hover:shadow-medium transition-all duration-200"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Dashboard
+        </NuxtLink>
+      </div>
       <!-- VP Access Check -->
       <div v-if="!userStore.isVP" class="bg-red-50 border border-red-200 rounded-md p-4">
         <div class="flex">
@@ -147,7 +159,7 @@ const refreshUsers = async () => {
 
 // Ensure auth state is synced
 const { syncUserStore } = useAuth()
-onMounted(() => {
-  syncUserStore()
+onMounted(async () => {
+  await syncUserStore()
 })
 </script>

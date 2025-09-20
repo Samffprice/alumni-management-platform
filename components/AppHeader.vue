@@ -1,45 +1,51 @@
 <template>
-  <header class="bg-white shadow-sm border-b border-gray-200">
+  <header class="bg-white/95 backdrop-blur-md shadow-soft border-b border-gray-200/60 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo and Brand -->
         <div class="flex items-center">
-          <NuxtLink to="/dashboard" class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-maroon-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-sm">AE</span>
+          <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
+            <div class="w-10 h-10 bg-gradient-to-br from-aggie-600 to-aggie-700 rounded-xl flex items-center justify-center shadow-medium group-hover:shadow-strong transition-all duration-200 group-hover:scale-105">
+              <span class="text-white font-bold text-lg">AE</span>
             </div>
-            <span class="text-xl font-semibold text-gray-900 hidden sm:block">
-              Alumni Management
-            </span>
+            <div class="hidden sm:block">
+              <span class="text-xl font-bold text-gray-900 group-hover:text-aggie-600 transition-colors duration-200">
+                Alumni Management
+              </span>
+              <p class="text-xs text-gray-500 -mt-1">Aggie Entrepreneurs</p>
+            </div>
           </NuxtLink>
         </div>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-8">
+        <nav class="hidden md:flex items-center space-x-2">
           <NuxtLink 
             to="/dashboard" 
-            class="text-gray-700 hover:text-maroon-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            :class="{ 'text-maroon-600 bg-maroon-50': $route.path === '/dashboard' }"
+            class="relative text-gray-700 hover:text-aggie-600 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-aggie-50"
+            :class="{ 'text-aggie-600 bg-aggie-50 shadow-soft': $route.path === '/dashboard' }"
           >
-            Dashboard
+            <span class="relative z-10">Dashboard</span>
+            <div v-if="$route.path === '/dashboard'" class="absolute inset-0 bg-gradient-to-r from-aggie-50 to-aggie-100 rounded-lg"></div>
           </NuxtLink>
           
           <NuxtLink 
             to="/contacts" 
-            class="text-gray-700 hover:text-maroon-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            :class="{ 'text-maroon-600 bg-maroon-50': $route.path.startsWith('/contacts') }"
+            class="relative text-gray-700 hover:text-aggie-600 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-aggie-50"
+            :class="{ 'text-aggie-600 bg-aggie-50 shadow-soft': $route.path.startsWith('/contacts') }"
           >
-            Contacts
+            <span class="relative z-10">Contacts</span>
+            <div v-if="$route.path.startsWith('/contacts')" class="absolute inset-0 bg-gradient-to-r from-aggie-50 to-aggie-100 rounded-lg"></div>
           </NuxtLink>
           
           <!-- Admin link for VPs only -->
           <NuxtLink 
             v-if="userStore.isVP"
             to="/admin/users" 
-            class="text-gray-700 hover:text-maroon-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            :class="{ 'text-maroon-600 bg-maroon-50': $route.path.startsWith('/admin') }"
+            class="relative text-gray-700 hover:text-aggie-600 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-aggie-50"
+            :class="{ 'text-aggie-600 bg-aggie-50 shadow-soft': $route.path.startsWith('/admin') }"
           >
-            Admin
+            <span class="relative z-10">Admin</span>
+            <div v-if="$route.path.startsWith('/admin')" class="absolute inset-0 bg-gradient-to-r from-aggie-50 to-aggie-100 rounded-lg"></div>
           </NuxtLink>
         </nav>
 
@@ -47,76 +53,99 @@
         <div class="relative">
           <button
             @click="toggleDropdown"
-            class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 rounded-md p-2"
-            :class="{ 'text-gray-900': isDropdownOpen }"
+            class="flex items-center space-x-3 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-aggie-500 focus:ring-offset-2 rounded-lg p-2 transition-all duration-200 hover:bg-gray-50"
+            :class="{ 'text-gray-900 bg-gray-50': isDropdownOpen }"
           >
-            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span class="text-sm font-medium text-gray-700">
+            <div class="w-9 h-9 bg-gradient-to-br from-aggie-100 to-aggie-200 rounded-full flex items-center justify-center shadow-soft border-2 border-white">
+              <span class="text-sm font-semibold text-aggie-700">
                 {{ userInitials }}
               </span>
             </div>
-            <span class="hidden sm:block text-sm font-medium">
-              {{ userStore.displayName }}
-            </span>
+            <div class="hidden sm:block text-left">
+              <p class="text-sm font-medium">{{ userStore.displayName }}</p>
+              <p class="text-xs text-gray-500">{{ userStore.roleDisplayName }}</p>
+            </div>
             <ChevronDownIcon 
-              class="w-4 h-4 transition-transform"
+              class="w-4 h-4 transition-transform duration-200"
               :class="{ 'rotate-180': isDropdownOpen }"
             />
           </button>
 
           <!-- Dropdown Menu -->
           <Transition
-            enter-active-class="transition ease-out duration-100"
-            enter-from-class="transform opacity-0 scale-95"
-            enter-to-class="transform opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95"
+            enter-active-class="transition ease-out duration-200"
+            enter-from-class="transform opacity-0 scale-95 translate-y-1"
+            enter-to-class="transform opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="transform opacity-100 scale-100 translate-y-0"
+            leave-to-class="transform opacity-0 scale-95 translate-y-1"
           >
             <div
               v-if="isDropdownOpen"
-              class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+              class="absolute right-0 mt-3 w-64 bg-white/95 backdrop-blur-md rounded-xl shadow-strong ring-1 ring-black/5 focus:outline-none z-50 border border-gray-100"
             >
-              <div class="py-1">
+              <div class="py-2">
                 <!-- User Info -->
-                <div class="px-4 py-2 border-b border-gray-100">
-                  <p class="text-sm font-medium text-gray-900">{{ userStore.displayName }}</p>
-                  <p class="text-xs text-gray-500">{{ userStore.roleDisplayName }}</p>
+                <div class="px-4 py-3 border-b border-gray-100/60">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-aggie-100 to-aggie-200 rounded-full flex items-center justify-center">
+                      <span class="text-sm font-semibold text-aggie-700">{{ userInitials }}</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-gray-900">{{ userStore.displayName }}</p>
+                      <p class="text-xs text-aggie-600 font-medium">{{ userStore.roleDisplayName }}</p>
+                    </div>
+                  </div>
                 </div>
                 
                 <!-- Navigation Links (Mobile) -->
-                <div class="md:hidden border-b border-gray-100">
+                <div class="md:hidden border-b border-gray-100/60 py-1">
                   <NuxtLink 
                     to="/dashboard"
                     @click="closeDropdown"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-aggie-50 hover:text-aggie-700 rounded-lg mx-2 transition-colors duration-200"
                   >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                    </svg>
                     Dashboard
                   </NuxtLink>
                   <NuxtLink 
                     to="/contacts"
                     @click="closeDropdown"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-aggie-50 hover:text-aggie-700 rounded-lg mx-2 transition-colors duration-200"
                   >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
                     Contacts
                   </NuxtLink>
                   <NuxtLink 
                     v-if="userStore.isVP"
                     to="/admin/users"
                     @click="closeDropdown"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-aggie-50 hover:text-aggie-700 rounded-lg mx-2 transition-colors duration-200"
                   >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                     Admin
                   </NuxtLink>
                 </div>
 
                 <!-- Logout -->
-                <button
-                  @click="handleLogout"
-                  class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Sign out
-                </button>
+                <div class="py-1">
+                  <button
+                    @click="handleLogout"
+                    class="flex items-center w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2 transition-colors duration-200"
+                  >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign out
+                  </button>
+                </div>
               </div>
             </div>
           </Transition>
@@ -249,24 +278,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Custom maroon color for Aggie theme */
-.bg-maroon-600 {
-  background-color: #722f37;
+/* Enhanced Aggie theme with smooth transitions */
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
 }
 
-.text-maroon-600 {
-  color: #722f37;
+/* Backdrop blur support */
+@supports (backdrop-filter: blur(12px)) {
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
 }
 
-.bg-maroon-50 {
-  background-color: #fdf2f8;
-}
-
-.hover\:text-maroon-600:hover {
-  color: #722f37;
-}
-
-.focus\:ring-maroon-500:focus {
-  --tw-ring-color: #881337;
+/* Custom focus styles */
+button:focus-visible {
+  outline: 2px solid theme('colors.aggie.500');
+  outline-offset: 2px;
 }
 </style>

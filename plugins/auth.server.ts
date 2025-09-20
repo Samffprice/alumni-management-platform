@@ -15,12 +15,15 @@ export default defineNuxtPlugin(() => {
       const userStore = useUserStore()
       
       // Update store with server-side user data
+      // Note: We don't fetch full_name on server-side to avoid database calls
+      // It will be fetched client-side when needed
       const userData = {
         id: user.value.id,
         email: user.value.email || '',
         app_metadata: {
           role: user.value.app_metadata?.role || 'member',
-          is_approved: user.value.app_metadata?.is_approved || false
+          is_approved: user.value.app_metadata?.is_approved || false,
+          full_name: user.value.app_metadata?.full_name // Use if already in metadata
         }
       }
       userStore.updateUserState(userData)

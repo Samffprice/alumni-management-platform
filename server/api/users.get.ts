@@ -59,12 +59,31 @@ export default defineEventHandler(async (event): Promise<{ users: UserManagement
       return { error: 'Failed to fetch users from database' }
     }
 
+    // Fetch user profiles to get full names
+    const { data: profiles, error: profilesError } = await adminSupabase
+      .from('user_profiles')
+      .select('user_id, full_name')
+
+    if (profilesError) {
+      console.warn(`[${requestId}] Error fetching user profiles:`, profilesError)
+      // Continue without profiles - we'll just use emails
+    }
+
+    // Create a map of user_id to full_name for quick lookup
+    const profilesMap = new Map<string, string>()
+    if (profiles) {
+      profiles.forEach(profile => {
+        profilesMap.set(profile.user_id, profile.full_name)
+      })
+    }
+
     // Transform users to UserManagement format with proper defaults
     const userManagementData: UserManagement[] = users
       .filter(user => user.email) // Filter out users without email
       .map(user => ({
         id: user.id,
         email: user.email || '',
+        full_name: profilesMap.get(user.id),
         role: user.app_metadata?.role || 'member',
         is_approved: user.app_metadata?.is_approved || false,
         created_at: user.created_at

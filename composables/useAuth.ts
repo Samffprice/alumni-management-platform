@@ -83,17 +83,39 @@ export const useAuth = () => {
   /**
    * Sync user store with current user state
    */
-  const syncUserStore = () => {
+  const syncUserStore = async () => {
     const userStore = getUserStore()
     if (!userStore) return
 
-    if (user.value && !userStore.user) {
+    if (user.value) {
+      // Always try to sync if user exists, even if store already has user data
+      // Try to fetch full name from user_profiles table
+      let fullName = user.value.app_metadata?.full_name
+      
+      if (!fullName) {
+        try {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('user_id', user.value.id)
+            .single()
+          
+          if (profile?.full_name) {
+            fullName = profile.full_name
+          }
+        } catch (profileError) {
+          // Profile fetch failed, continue without full name
+          console.warn('Could not fetch user profile in syncUserStore:', profileError)
+        }
+      }
+
       const userData = {
         id: user.value.id,
         email: user.value.email || '',
         app_metadata: {
           role: user.value.app_metadata?.role || 'member',
-          is_approved: user.value.app_metadata?.is_approved || false
+          is_approved: user.value.app_metadata?.is_approved || false,
+          full_name: fullName
         }
       }
       userStore.updateUserState(userData)

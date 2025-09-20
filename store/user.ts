@@ -20,11 +20,32 @@ export const useUserStore = defineStore('user', {
             try {
                 // Use the Supabase user composable for SSR compatibility
                 const user = useSupabaseUser()
-                
+                const supabase = useSupabaseClient()
+
                 if (user.value) {
                     // Extract role and approval status from user metadata
                     const role = user.value.app_metadata?.role || 'member'
                     const is_approved = user.value.app_metadata?.is_approved || false
+
+                    // Try to fetch full name from user_profiles table
+                    let fullName = user.value.app_metadata?.full_name
+
+                    if (!fullName) {
+                        try {
+                            const { data: profile } = await supabase
+                                .from('user_profiles')
+                                .select('full_name')
+                                .eq('user_id', user.value.id)
+                                .single()
+
+                            if (profile?.full_name) {
+                                fullName = profile.full_name
+                            }
+                        } catch (profileError) {
+                            // Profile fetch failed, continue without full name
+                            console.warn('Could not fetch user profile:', profileError)
+                        }
+                    }
 
                     // Update store state
                     this.user = {
@@ -32,7 +53,8 @@ export const useUserStore = defineStore('user', {
                         email: user.value.email || '',
                         app_metadata: {
                             role: role as UserRole,
-                            is_approved
+                            is_approved,
+                            full_name: fullName
                         }
                     }
                     this.role = role as UserRole
@@ -78,7 +100,9 @@ export const useUserStore = defineStore('user', {
             this.user = user
             this.role = user.app_metadata.role
             this.is_approved = user.app_metadata.is_approved
-        }
+        },
+
+
     },
 
     getters: {

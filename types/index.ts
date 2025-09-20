@@ -59,6 +59,7 @@ export interface User {
   app_metadata: {
     role: UserRole
     is_approved: boolean
+    full_name?: string
   }
 }
 
@@ -136,6 +137,7 @@ export interface SearchParams {
 export interface UserManagement {
   id: string
   email: string
+  full_name?: string
   role: UserRole
   is_approved: boolean
   created_at: string
