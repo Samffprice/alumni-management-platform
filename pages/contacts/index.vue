@@ -178,8 +178,11 @@ const handleViewProfile = (userId: string) => {
 
 // Lifecycle
 onMounted(async () => {
-  // Ensure auth state is synced
-  const { syncUserStore } = useAuth()
+  // Ensure auth state is synced and refresh session to get latest approval status
+  const { syncUserStore, refreshUserSession } = useAuth()
+  
+  // First try to refresh the session to get the latest user metadata
+  await refreshUserSession()
   await syncUserStore()
   
   // Fetch contacts with loading state

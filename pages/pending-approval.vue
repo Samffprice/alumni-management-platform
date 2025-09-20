@@ -107,11 +107,11 @@ const checkApprovalStatus = async () => {
   statusMessage.value = null
   
   try {
-    // Refresh user data from Supabase
-    const { data: { user }, error } = await supabase.auth.getUser()
+    // Force refresh user session to get latest metadata
+    const { data: { session }, error: sessionError } = await supabase.auth.refreshSession()
     
-    if (error) {
-      console.error('Error checking user status:', error)
+    if (sessionError) {
+      console.error('Error refreshing session:', sessionError)
       statusMessage.value = {
         type: 'error',
         text: 'Unable to check approval status. Please try again.'
@@ -119,12 +119,13 @@ const checkApprovalStatus = async () => {
       return
     }
     
-    if (!user) {
+    if (!session?.user) {
       // User is not logged in, redirect to login
       await navigateTo('/login')
       return
     }
     
+    const user = session.user
     const isApproved = user.app_metadata?.is_approved || false
     
     if (isApproved) {
@@ -134,7 +135,8 @@ const checkApprovalStatus = async () => {
         email: user.email || '',
         app_metadata: {
           role: user.app_metadata?.role || 'member',
-          is_approved: true
+          is_approved: true,
+          full_name: user.app_metadata?.full_name
         }
       })
       
@@ -198,6 +200,9 @@ const handleLogout = async () => {
   }
 }
 
+// Polling interval for checking approval status
+let pollInterval: NodeJS.Timeout | null = null
+
 // Get current user info on mount
 onMounted(async () => {
   try {
@@ -211,7 +216,14 @@ onMounted(async () => {
       if (isApproved) {
         // User is approved, redirect to dashboard
         await navigateTo('/dashboard')
+        return
       }
+      
+      // Start polling for approval status every 30 seconds
+      pollInterval = setInterval(async () => {
+        await checkApprovalStatusSilently()
+      }, 30000) // Check every 30 seconds
+      
     } else {
       // No user found, redirect to login
       await navigateTo('/login')
@@ -221,6 +233,58 @@ onMounted(async () => {
     await navigateTo('/login')
   }
 })
+
+// Clean up polling on unmount
+onUnmounted(() => {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+})
+
+// Silent approval status check (for polling)
+const checkApprovalStatusSilently = async () => {
+  try {
+    // Force refresh user data from Supabase
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if (error || !user) return
+    
+    const isApproved = user.app_metadata?.is_approved || false
+    
+    if (isApproved) {
+      // User has been approved! Update store and redirect
+      userStore.updateUserState({
+        id: user.id,
+        email: user.email || '',
+        app_metadata: {
+          role: user.app_metadata?.role || 'member',
+          is_approved: true,
+          full_name: user.app_metadata?.full_name
+        }
+      })
+      
+      // Clear polling
+      if (pollInterval) {
+        clearInterval(pollInterval)
+        pollInterval = null
+      }
+      
+      // Show success message and redirect
+      statusMessage.value = {
+        type: 'success',
+        text: 'Great news! Your account has been approved. Redirecting to dashboard...'
+      }
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        navigateTo('/dashboard')
+      }, 2000)
+    }
+  } catch (error) {
+    console.error('Error in silent approval check:', error)
+  }
+}
 
 // SEO
 useHead({

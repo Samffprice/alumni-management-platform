@@ -81,6 +81,32 @@ export const useAuth = () => {
   }
 
   /**
+   * Refresh user session and sync user store with fresh data
+   */
+  const refreshUserSession = async () => {
+    try {
+      // Force refresh the session to get latest user metadata
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      
+      if (error) {
+        console.error('Error refreshing session:', error)
+        return false
+      }
+      
+      if (session?.user) {
+        // Sync the refreshed user data
+        await syncUserStore()
+        return true
+      }
+      
+      return false
+    } catch (error) {
+      console.error('Error in refreshUserSession:', error)
+      return false
+    }
+  }
+
+  /**
    * Sync user store with current user state
    */
   const syncUserStore = async () => {
@@ -133,6 +159,7 @@ export const useAuth = () => {
     canEditContacts,
     canDeleteContacts,
     signOut,
-    syncUserStore
+    syncUserStore,
+    refreshUserSession
   }
 }
