@@ -66,8 +66,51 @@ export default defineEventHandler(async (event): Promise<DeleteUserResponse> => 
       }
     )
 
-    // VP authentication is verified by middleware
-    console.log(`[${requestId}] VP authentication verified by middleware`)
+    // Server-side session validation for additional security
+    const authHeader = getHeader(event, 'authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn(`[${requestId}] Missing or invalid authorization header`)
+      return {
+        success: false,
+        error: 'Authentication required'
+      }
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    
+    // Verify the JWT token and get user
+    const { data: { user }, error: authError } = await adminSupabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      console.warn(`[${requestId}] Invalid token or user not found:`, authError)
+      return {
+        success: false,
+        error: 'Invalid authentication token'
+      }
+    }
+
+    // Verify user is VP and approved
+    const userRole = user.app_metadata?.role
+    const isApproved = user.app_metadata?.is_approved || false
+    
+    if (userRole !== 'vp' || !isApproved) {
+      console.warn(`[${requestId}] Access denied - user role: ${userRole}, approved: ${isApproved}`)
+      return {
+        success: false,
+        error: 'Access denied: VP privileges required'
+      }
+    }
+
+    // Prevent self-deletion
+    if (user.id === targetUserId) {
+      console.warn(`[${requestId}] Attempted self-deletion by user: ${user.id}`)
+      return {
+        success: false,
+        error: 'Cannot delete your own account'
+      }
+    }
+
+    console.log(`[${requestId}] VP authentication verified - User: ${user.id}`)
     
     // Verify target user exists before attempting deletion
     const { data: targetUser, error: fetchError } = await adminSupabase.auth.admin.getUserById(targetUserId)

@@ -184,6 +184,7 @@ const updatingUsers = ref(new Set<string>())
 // Composables
 const supabase = useSupabaseClient()
 const { addNotification } = useNotifications()
+const { secureApiCall } = useSecureApi()
 
 // Fetch users from server API
 const fetchUsers = async () => {
@@ -191,7 +192,7 @@ const fetchUsers = async () => {
   error.value = null
   
   try {
-    const response = await $fetch<{ users: UserManagement[] } | { error: string }>('/api/users')
+    const response = await secureApiCall<{ users: UserManagement[] } | { error: string }>('/api/users')
 
     if ('error' in response) {
       throw new Error(response.error)
@@ -224,7 +225,7 @@ const updateUserRole = async (userId: string, newRole: UserRole) => {
       newRole
     }
 
-    const data = await $fetch<UpdateUserRoleResponse>('/api/update-user-role', {
+    const data = await secureApiCall<UpdateUserRoleResponse>('/api/update-user-role', {
       method: 'POST',
       body: requestData
     })
@@ -269,7 +270,7 @@ const approveUser = async (userId: string) => {
       isApproved: true
     }
 
-    const data = await $fetch<UpdateUserRoleResponse>('/api/update-user-role', {
+    const data = await secureApiCall<UpdateUserRoleResponse>('/api/update-user-role', {
       method: 'POST',
       body: requestData
     })
@@ -314,7 +315,7 @@ const unapproveUser = async (userId: string) => {
       isApproved: false
     }
 
-    const data = await $fetch<UpdateUserRoleResponse>('/api/update-user-role', {
+    const data = await secureApiCall<UpdateUserRoleResponse>('/api/update-user-role', {
       method: 'POST',
       body: requestData
     })
@@ -361,8 +362,7 @@ const removeUser = async (userId: string) => {
   updatingUsers.value.add(userId)
   
   try {
-    // We'll need to create a new API endpoint for user deletion
-    const data = await $fetch<{ success: boolean; error?: string }>('/api/delete-user', {
+    const data = await secureApiCall<{ success: boolean; error?: string }>('/api/delete-user', {
       method: 'POST',
       body: { targetUserId: userId }
     })
