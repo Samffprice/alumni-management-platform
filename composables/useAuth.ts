@@ -26,13 +26,11 @@ export const useAuth = () => {
   })
 
   /**
-   * Check if user is approved - either explicitly approved or has a role assigned
+   * Check if user is approved - only check explicit approval flag
    */
   const isApproved = computed(() => {
     if (!user.value) return false
-    const isExplicitlyApproved = user.value.app_metadata?.is_approved || false
-    const hasRole = user.value.app_metadata?.role && user.value.app_metadata.role !== 'pending'
-    return isExplicitlyApproved || hasRole
+    return user.value.app_metadata?.is_approved || false
   })
 
   /**

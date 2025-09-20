@@ -107,13 +107,11 @@ export const useUserStore = defineStore('user', {
 
     getters: {
         /**
-         * Check if user is approved - either explicitly approved or has a role assigned
+         * Check if user is approved - only check explicit approval flag
          */
         isApproved: (state): boolean => {
             if (!state.user) return false
-            const isExplicitlyApproved = state.is_approved
-            const hasRole = state.role && state.role !== 'pending'
-            return isExplicitlyApproved || hasRole
+            return state.is_approved
         },
 
         /**

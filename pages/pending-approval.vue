@@ -107,11 +107,11 @@ const checkApprovalStatus = async () => {
   statusMessage.value = null
   
   try {
-    // Force refresh user session to get latest metadata
-    const { data: { session }, error: sessionError } = await supabase.auth.refreshSession()
+    // Get current user data (this should be fresh enough for manual checks)
+    const { data: { user }, error } = await supabase.auth.getUser()
     
-    if (sessionError) {
-      console.error('Error refreshing session:', sessionError)
+    if (error) {
+      console.error('Error checking user status:', error)
       statusMessage.value = {
         type: 'error',
         text: 'Unable to check approval status. Please try again.'
@@ -119,13 +119,12 @@ const checkApprovalStatus = async () => {
       return
     }
     
-    if (!session?.user) {
+    if (!user) {
       // User is not logged in, redirect to login
       await navigateTo('/login')
       return
     }
     
-    const user = session.user
     const isApproved = user.app_metadata?.is_approved || false
     
     if (isApproved) {
@@ -245,11 +244,12 @@ onUnmounted(() => {
 // Silent approval status check (for polling)
 const checkApprovalStatusSilently = async () => {
   try {
-    // Force refresh user data from Supabase
-    const { data: { user }, error } = await supabase.auth.getUser()
+    // Only refresh session for polling, not regular getUser
+    const { data: { session }, error } = await supabase.auth.refreshSession()
     
-    if (error || !user) return
+    if (error || !session?.user) return
     
+    const user = session.user
     const isApproved = user.app_metadata?.is_approved || false
     
     if (isApproved) {
