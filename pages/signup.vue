@@ -12,6 +12,26 @@
     <form class="space-y-6" @submit.prevent="handleSignup">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
+            <label for="fullName" class="sr-only">Full Name</label>
+            <input
+              id="fullName"
+              v-model="form.fullName"
+              name="fullName"
+              type="text"
+              autocomplete="name"
+              required
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              :class="getFieldClasses('fullName')"
+              placeholder="Full Name"
+              @blur="validateField('fullName')"
+              @input="clearFieldError('fullName')"
+            />
+            <div v-if="errors.fullName" class="mt-1 text-sm text-red-600">
+              {{ errors.fullName }}
+            </div>
+          </div>
+          
+          <div>
             <label for="email" class="sr-only">Email address</label>
             <input
               id="email"
@@ -20,7 +40,7 @@
               type="email"
               autocomplete="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               :class="getFieldClasses('email')"
               placeholder="Email address"
               @blur="validateField('email')"
@@ -28,6 +48,26 @@
             />
             <div v-if="errors.email" class="mt-1 text-sm text-red-600">
               {{ errors.email }}
+            </div>
+          </div>
+          
+          <div>
+            <label for="phoneNumber" class="sr-only">Phone Number</label>
+            <input
+              id="phoneNumber"
+              v-model="form.phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              autocomplete="tel"
+              required
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              :class="getFieldClasses('phoneNumber')"
+              placeholder="Phone Number"
+              @blur="validateField('phoneNumber')"
+              @input="clearFieldError('phoneNumber')"
+            />
+            <div v-if="errors.phoneNumber" class="mt-1 text-sm text-red-600">
+              {{ errors.phoneNumber }}
             </div>
           </div>
           
@@ -125,7 +165,9 @@ definePageMeta({
 
 // Reactive form data
 const form = reactive({
+  fullName: '',
   email: '',
+  phoneNumber: '',
   password: '',
   confirmPassword: ''
 })
@@ -140,11 +182,27 @@ const successMessage = ref('')
 const supabase = useSupabaseClient()
 
 // Validation rules
+const validateFullName = (fullName: string): string | null => {
+  if (!fullName) return 'Full name is required'
+  if (fullName.trim().length < 2) return 'Full name must be at least 2 characters'
+  if (fullName.length > 100) return 'Full name must be no more than 100 characters'
+  return null
+}
+
 const validateEmail = (email: string): string | null => {
   if (!email) return 'Email is required'
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) return 'Please enter a valid email address'
   if (email.length > 255) return 'Email must be no more than 255 characters'
+  return null
+}
+
+const validatePhoneNumber = (phoneNumber: string): string | null => {
+  if (!phoneNumber) return 'Phone number is required'
+  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+  if (!phoneRegex.test(phoneNumber.replace(/[\s\-\(\)]/g, ''))) {
+    return 'Please enter a valid phone number'
+  }
   return null
 }
 
@@ -171,8 +229,14 @@ const validateField = (field: string) => {
   let error: string | null = null
   
   switch (field) {
+    case 'fullName':
+      error = validateFullName(form?.fullName || '')
+      break
     case 'email':
       error = validateEmail(form?.email || '')
+      break
+    case 'phoneNumber':
+      error = validatePhoneNumber(form?.phoneNumber || '')
       break
     case 'password':
       error = validatePassword(form?.password || '')
@@ -209,7 +273,9 @@ const getFieldClasses = (field: string) => {
 
 // Form validation
 const isFormValid = computed(() => {
-  return form?.email && 
+  return form?.fullName && 
+         form?.email && 
+         form?.phoneNumber &&
          form?.password && 
          form?.confirmPassword && 
          Object.keys(errors).length === 0
@@ -222,7 +288,9 @@ const handleSignup = async () => {
   successMessage.value = ''
   
   // Validate all fields
+  validateField('fullName')
   validateField('email')
+  validateField('phoneNumber')
   validateField('password')
   validateField('confirmPassword')
   
@@ -241,7 +309,9 @@ const handleSignup = async () => {
       options: {
         data: {
           role: 'member',
-          is_approved: false
+          is_approved: false,
+          full_name: form?.fullName || '',
+          phone_number: form?.phoneNumber || ''
         }
       }
     })
@@ -263,12 +333,35 @@ const handleSignup = async () => {
     }
     
     if (data.user) {
+      // Create user profile after successful signup
+      try {
+        const { error: profileError } = await $fetch('/api/create-user-profile', {
+          method: 'POST',
+          body: {
+            userId: data.user.id,
+            fullName: form?.fullName || '',
+            phoneNumber: form?.phoneNumber || '',
+            userPosition: 'Member' // Default position based on role
+          }
+        })
+        
+        if (profileError) {
+          console.error('Profile creation error:', profileError)
+          // Don't fail the signup for profile creation errors
+        }
+      } catch (profileError) {
+        console.error('Profile creation failed:', profileError)
+        // Don't fail the signup for profile creation errors
+      }
+      
       // Success - show confirmation message
       successMessage.value = 'Account created successfully! Please check your email to confirm your account, then wait for approval from a VP.'
       
       // Clear form
       if (form) {
+        form.fullName = ''
         form.email = ''
+        form.phoneNumber = ''
         form.password = ''
         form.confirmPassword = ''
       }

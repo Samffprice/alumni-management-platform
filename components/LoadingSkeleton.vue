@@ -116,6 +116,33 @@
       </div>
     </div>
 
+    <!-- Profile Skeleton -->
+    <div v-else-if="type === 'profile'" class="space-y-6">
+      <!-- Profile Header -->
+      <div class="px-6 py-8 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="h-20 w-20 bg-gray-200 rounded-full"></div>
+          </div>
+          <div class="ml-6 space-y-2">
+            <div class="h-8 bg-gray-200 rounded w-48"></div>
+            <div class="h-4 bg-gray-200 rounded w-32"></div>
+            <div class="h-4 bg-gray-200 rounded w-40"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Details -->
+      <div class="px-6 py-6">
+        <div class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+          <div v-for="i in 6" :key="i" class="space-y-2">
+            <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Generic Skeleton -->
     <div v-else class="space-y-3">
       <div v-for="i in lines" :key="i" class="h-4 bg-gray-200 rounded w-full"></div>
@@ -125,7 +152,7 @@
 
 <script setup lang="ts">
 interface Props {
-  type?: 'table' | 'form' | 'card' | 'list' | 'dashboard' | 'generic'
+  type?: 'table' | 'form' | 'card' | 'list' | 'dashboard' | 'profile' | 'generic'
   rows?: number
   columns?: number
   fields?: number

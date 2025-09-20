@@ -67,16 +67,10 @@ export const useSupabaseOperations = () => {
     async fetchContacts(userId?: string): Promise<Contact[]> {
       return executeOperation(
         async () => {
+          // Try to use the view first, fallback to regular contacts table
           let query = supabase
-            .from('contacts')
-            .select(`
-              *,
-              contact_meta (
-                id,
-                source_description,
-                created_at
-              )
-            `)
+            .from('contacts_with_user_info')
+            .select('*')
             .order('created_at', { ascending: false })
 
           // Apply user-based filtering for members
@@ -84,7 +78,34 @@ export const useSupabaseOperations = () => {
             query = query.eq('added_by', userId)
           }
 
-          const { data, error } = await query
+          let { data, error } = await query
+
+          // If the view doesn't exist, fallback to regular contacts table
+          if (error && (error.message?.includes('does not exist') || error.message?.includes('relation') || error.code === '42P01')) {
+            console.warn('contacts_with_user_info view not found, falling back to contacts table:', error.message)
+            
+            let fallbackQuery = supabase
+              .from('contacts')
+              .select(`
+                *,
+                contact_meta (
+                  id,
+                  source_description,
+                  created_at
+                )
+              `)
+              .order('created_at', { ascending: false })
+
+            if (userId) {
+              fallbackQuery = fallbackQuery.eq('added_by', userId)
+            }
+
+            const fallbackResult = await fallbackQuery
+            data = fallbackResult.data
+            error = fallbackResult.error
+            
+            console.log('Fallback query result:', { data: data?.length, error: error?.message })
+          }
 
           if (error) throw error
           return data || []

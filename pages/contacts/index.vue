@@ -35,7 +35,7 @@
       >
         <!-- Loading State -->
         <div v-if="isLoading" class="py-12">
-          <LoadingSkeleton type="table" :rows="5" :columns="7" />
+          <LoadingSkeleton type="table" :rows="5" :columns="8" />
         </div>
 
         <!-- Contacts Table -->
@@ -47,6 +47,7 @@
             @view="handleViewContact"
             @edit="handleEditContact"
             @delete="handleDeleteContact"
+            @view-profile="handleViewProfile"
           />
         </div>
 
@@ -91,7 +92,7 @@ import LoadingSkeleton from '~/components/LoadingSkeleton.vue'
 
 // Define page meta
 definePageMeta({
-  // Global auth middleware handles authentication
+  // Global auth middleware handles authentication automatically
 })
 
 // Composables
@@ -155,6 +156,10 @@ const handleDeleteContact = async (contact: Contact) => {
       retryable: false 
     })
   }
+}
+
+const handleViewProfile = (userId: string) => {
+  router.push(`/profile/${userId}`)
 }
 
 // Lifecycle

@@ -19,8 +19,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return navigateTo('/login')
   }
 
-  // Check if user is approved using the user metadata directly
-  const isApproved = user.value.app_metadata?.is_approved || false
+  // Check if user is approved - either explicitly approved or has a role assigned
+  const isExplicitlyApproved = user.value.app_metadata?.is_approved || false
+  const hasRole = user.value.app_metadata?.role && user.value.app_metadata.role !== 'pending'
+  const isApproved = isExplicitlyApproved || hasRole
   
   if (!isApproved) {
     // User is authenticated but not approved, redirect to pending approval page

@@ -25,6 +25,10 @@ export interface Contact {
   contact_type: ContactType
   created_at: string
   added_by: string
+  added_by_name?: string
+  added_by_position?: string
+  added_by_phone?: string
+  added_by_email?: string
   contact_meta?: ContactMeta
 }
 
@@ -56,6 +60,19 @@ export interface User {
     role: UserRole
     is_approved: boolean
   }
+}
+
+// User Profile Interface
+export interface UserProfile {
+  id: string
+  user_id: string
+  full_name: string
+  phone_number?: string
+  user_position?: string
+  email: string
+  account_created: string
+  profile_created: string
+  profile_updated: string
 }
 
 // Form Validation Types

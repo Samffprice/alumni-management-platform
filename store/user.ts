@@ -83,10 +83,13 @@ export const useUserStore = defineStore('user', {
 
     getters: {
         /**
-         * Check if user is approved
+         * Check if user is approved - either explicitly approved or has a role assigned
          */
         isApproved: (state): boolean => {
-            return state.is_approved && state.user !== null
+            if (!state.user) return false
+            const isExplicitlyApproved = state.is_approved
+            const hasRole = state.role && state.role !== 'pending'
+            return isExplicitlyApproved || hasRole
         },
 
         /**
@@ -118,9 +121,14 @@ export const useUserStore = defineStore('user', {
         },
 
         /**
-         * Get user's display name (email for now)
+         * Get user's display name (full name from profile or email)
          */
         displayName: (state): string => {
+            // Try to get full name from user metadata first
+            const fullName = state.user?.app_metadata?.full_name
+            if (fullName) {
+                return fullName
+            }
             return state.user?.email || 'Guest'
         },
 

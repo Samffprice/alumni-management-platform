@@ -173,6 +173,29 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{{ contact.business_name || '-' }}</div>
               </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div v-if="contact.added_by_name" class="text-sm">
+                  <button
+                    v-if="canViewProfiles"
+                    @click="handleViewProfile(contact.added_by)"
+                    class="text-blue-600 hover:text-blue-900 hover:underline"
+                    :title="`View ${contact.added_by_name}'s profile`"
+                  >
+                    {{ contact.added_by_name }}
+                  </button>
+                  <span v-else class="text-gray-900">
+                    {{ contact.added_by_name }}
+                  </span>
+                  <div v-if="contact.added_by_position" class="text-xs text-gray-500">
+                    {{ contact.added_by_position }}
+                  </div>
+                </div>
+                <div v-else-if="contact.added_by_email" class="text-sm">
+                  <span class="text-gray-900">{{ contact.added_by_email }}</span>
+                  <div class="text-xs text-gray-500">Email only</div>
+                </div>
+                <div v-else class="text-sm text-gray-500">Unknown</div>
+              </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ formatDate(contact.created_at) }}
               </td>
@@ -284,6 +307,7 @@ const emit = defineEmits<{
   view: [contact: Contact]
   edit: [contact: Contact]
   delete: [contact: Contact]
+  viewProfile: [userId: string]
 }>()
 
 // Reactive state
@@ -303,12 +327,14 @@ const columns = [
   { key: 'contact_type', label: 'Type', sortable: true },
   { key: 'business_sector', label: 'Sector', sortable: true },
   { key: 'business_name', label: 'Business', sortable: true },
+  { key: 'added_by_name', label: 'Added By', sortable: true },
   { key: 'created_at', label: 'Added', sortable: true }
 ]
 
 // Permission computed properties
 const canEdit = computed(() => props.userRole === 'officer' || props.userRole === 'vp')
 const canDelete = computed(() => props.userRole === 'vp')
+const canViewProfiles = computed(() => props.userRole === 'officer' || props.userRole === 'vp')
 
 // Get unique business sectors for filter dropdown
 const uniqueBusinessSectors = computed(() => {
@@ -462,6 +488,10 @@ const handleEdit = (contact: Contact) => {
 
 const handleDelete = (contact: Contact) => {
   emit('delete', contact)
+}
+
+const handleViewProfile = (userId: string) => {
+  emit('viewProfile', userId)
 }
 
 // Reset page when filters change
