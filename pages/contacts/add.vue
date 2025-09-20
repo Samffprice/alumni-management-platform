@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Back Button -->
       <div class="mb-6">
         <NuxtLink
@@ -14,8 +14,8 @@
         </NuxtLink>
       </div>
 
-      <!-- Breadcrumb Navigation -->
-      <nav class="flex mb-8" aria-label="Breadcrumb">
+      <!-- Breadcrumb Navigation - Hidden on mobile -->
+      <nav class="hidden sm:flex mb-8" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
           <li class="inline-flex items-center">
             <NuxtLink
@@ -53,16 +53,16 @@
       </nav>
 
       <!-- Page Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Add New Contact</h1>
-        <p class="mt-2 text-gray-600">
+      <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Add New Contact</h1>
+        <p class="mt-2 text-sm sm:text-base text-gray-600">
           Add a new alumni, mentor, or professional contact to the database.
         </p>
       </div>
 
       <!-- Contact Form -->
       <div class="bg-white shadow-sm rounded-lg">
-        <div class="px-6 py-6">
+        <div class="px-4 sm:px-6 py-4 sm:py-6">
           <ErrorBoundary
             :retryable="false"
             fallback-title="Form Error"

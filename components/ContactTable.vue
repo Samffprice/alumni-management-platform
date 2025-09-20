@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-4">
     <!-- Search and Filter Controls -->
-    <div class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100/60">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-soft border border-gray-100/60">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Search Input -->
-        <div>
+        <div class="sm:col-span-2 lg:col-span-1">
           <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
             Search
           </label>
@@ -53,7 +53,7 @@
       </div>
 
       <!-- Clear Filters Button -->
-      <div class="mt-4 flex justify-end">
+      <div class="mt-4 flex justify-center sm:justify-end">
         <button
           @click="clearFilters"
           class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-aggie-700 hover:bg-aggie-50 rounded-lg transition-all duration-200"
@@ -64,11 +64,11 @@
     </div>
 
     <!-- Results Summary -->
-    <div class="flex justify-between items-center">
-      <p class="text-sm text-gray-600">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
+      <p class="text-sm text-gray-600 text-center sm:text-left">
         Showing {{ paginatedContacts.length }} of {{ filteredContacts.length }} contacts
       </p>
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center justify-center sm:justify-end space-x-2">
         <label for="page-size" class="text-sm text-gray-600">Show:</label>
         <select
           id="page-size"
@@ -83,8 +83,8 @@
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="bg-white shadow-soft rounded-2xl border border-gray-100/60 overflow-hidden">
+    <!-- Desktop Table -->
+    <div class="hidden lg:block bg-white shadow-soft rounded-2xl border border-gray-100/60 overflow-hidden">
       <!-- Loading State -->
       <div v-if="loading" class="p-6">
         <LoadingSkeleton type="table" :rows="5" :columns="7" />
@@ -247,6 +247,141 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Mobile Cards -->
+    <div class="lg:hidden space-y-4">
+      <!-- Loading State -->
+      <div v-if="loading" class="space-y-4">
+        <div v-for="i in 3" :key="i" class="bg-white rounded-xl p-4 shadow-soft animate-pulse">
+          <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="paginatedContacts.length === 0" class="bg-white rounded-xl p-8 shadow-soft text-center">
+        <svg class="w-12 h-12 text-gray-300 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <p class="text-lg font-medium text-gray-900 mb-2">No contacts found</p>
+        <p class="text-sm text-gray-500">Try adjusting your search or filter criteria</p>
+      </div>
+
+      <!-- Contact Cards -->
+      <div v-else class="space-y-4">
+        <div 
+          v-for="contact in paginatedContacts" 
+          :key="contact.id" 
+          class="bg-white rounded-xl p-4 shadow-soft border border-gray-100 hover:shadow-medium transition-all duration-200"
+        >
+          <!-- Contact Header -->
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex-1 min-w-0">
+              <button
+                @click="handleView(contact)"
+                class="text-left w-full hover:bg-aggie-50 rounded-lg p-2 -m-2 transition-all duration-200"
+              >
+                <h3 class="text-lg font-semibold text-gray-900 hover:text-aggie-600 transition-colors duration-200 truncate">
+                  {{ contact.name }}
+                </h3>
+                <p class="text-sm text-gray-600 truncate">{{ contact.email }}</p>
+              </button>
+            </div>
+            <div class="flex-shrink-0 ml-3">
+              <span :class="[
+                'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+                contact.contact_type === 'Alumni' ? 'bg-blue-100 text-blue-800' :
+                contact.contact_type === 'Mentor' ? 'bg-green-100 text-green-800' :
+                'bg-gray-100 text-gray-800'
+              ]">
+                {{ contact.contact_type }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Contact Details -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm">
+            <div v-if="contact.phone_number">
+              <span class="text-gray-500 font-medium">Phone:</span>
+              <div class="text-gray-900">{{ contact.phone_number }}</div>
+            </div>
+            <div v-if="contact.business_sector">
+              <span class="text-gray-500 font-medium">Sector:</span>
+              <div class="text-gray-900">{{ contact.business_sector }}</div>
+            </div>
+            <div v-if="contact.business_name">
+              <span class="text-gray-500 font-medium">Business:</span>
+              <div class="text-gray-900">{{ contact.business_name }}</div>
+            </div>
+            <div>
+              <span class="text-gray-500 font-medium">Added:</span>
+              <div class="text-gray-900">{{ formatDate(contact.created_at) }}</div>
+            </div>
+          </div>
+
+          <!-- Added By Info -->
+          <div v-if="contact.added_by_name || contact.added_by_email" class="mb-4 text-sm">
+            <span class="text-gray-500 font-medium">Added by:</span>
+            <div v-if="contact.added_by_name">
+              <button
+                v-if="canViewProfiles"
+                @click="handleViewProfile(contact.added_by)"
+                class="text-blue-600 hover:text-blue-900 hover:underline"
+                :title="`View ${contact.added_by_name}'s profile`"
+              >
+                {{ contact.added_by_name }}
+              </button>
+              <span v-else class="text-gray-900">
+                {{ contact.added_by_name }}
+              </span>
+              <div v-if="contact.added_by_position" class="text-xs text-gray-500">
+                {{ contact.added_by_position }}
+              </div>
+            </div>
+            <div v-else-if="contact.added_by_email" class="text-gray-900">
+              {{ contact.added_by_email }}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-100">
+            <button
+              @click="handleView(contact)"
+              class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              View
+            </button>
+
+            <button
+              v-if="canEdit"
+              @click="handleEdit(contact)"
+              class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-blue-200 text-sm font-medium rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+
+            <button
+              v-if="canDelete"
+              @click="handleDelete(contact)"
+              class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-red-200 text-sm font-medium rounded-lg text-red-700 bg-red-50 hover:bg-red-100 hover:border-red-300 transition-all duration-200"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 

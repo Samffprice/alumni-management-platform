@@ -1,12 +1,13 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <!-- Page Header -->
+    <!-- Mobile-Friendly Page Header -->
     <div class="bg-white/95 backdrop-blur-sm shadow-soft border-b border-gray-100/60">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-8">
-          <div class="flex items-center justify-between">
-            <div>
-              <nav class="flex" aria-label="Breadcrumb">
+        <div class="py-4 sm:py-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div class="flex-1 min-w-0">
+              <!-- Simplified Breadcrumb - Hidden on mobile -->
+              <nav class="hidden sm:flex mb-2" aria-label="Breadcrumb">
                 <ol class="flex items-center space-x-4">
                   <li>
                     <div>
@@ -36,22 +37,23 @@
                   </li>
                 </ol>
               </nav>
-              <div class="mt-2">
-                <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+              
+              <div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-7 text-gray-900 truncate">
                   User Management
                 </h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <p class="mt-1 text-xs sm:text-sm text-gray-500">
                   Manage user accounts, roles, and approval status
                 </p>
               </div>
             </div>
             
             <!-- Refresh Button -->
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center justify-center sm:justify-end">
               <button
                 @click="refreshUsers"
                 :disabled="refreshing"
-                class="inline-flex items-center px-6 py-3 border border-gray-200 rounded-xl shadow-soft text-sm font-semibold text-gray-700 bg-white hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-medium"
+                class="inline-flex items-center justify-center w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border border-gray-200 rounded-xl shadow-soft text-sm font-semibold text-gray-700 bg-white hover:bg-aggie-50 hover:border-aggie-200 hover:text-aggie-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-medium"
               >
                 <svg 
                   :class="['h-4 w-4 mr-2', refreshing ? 'animate-spin' : '']" 
@@ -70,9 +72,9 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Back Button -->
-      <div class="mb-6">
+      <div class="mb-4 sm:mb-6">
         <NuxtLink
           to="/dashboard"
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-aggie-700 bg-white hover:bg-aggie-50 border border-gray-200 hover:border-aggie-200 rounded-xl shadow-soft hover:shadow-medium transition-all duration-200"
@@ -84,15 +86,15 @@
         </NuxtLink>
       </div>
       <!-- VP Access Check -->
-      <div v-if="!userStore.isVP" class="bg-red-50 border border-red-200 rounded-md p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+      <div v-if="!userStore.isVP" class="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-start">
+          <div class="flex-shrink-0 self-center sm:self-start">
+            <svg class="h-6 w-6 sm:h-5 sm:w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
             </svg>
           </div>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-red-800">
+          <div class="mt-3 sm:mt-0 sm:ml-3 text-center sm:text-left">
+            <h3 class="text-sm sm:text-base font-medium text-red-800">
               Access Denied
             </h3>
             <div class="mt-2 text-sm text-red-700">
@@ -102,11 +104,14 @@
               </p>
             </div>
             <div class="mt-4">
-              <div class="-mx-2 -my-1.5 flex">
+              <div class="flex justify-center sm:justify-start">
                 <NuxtLink
                   to="/dashboard"
-                  class="bg-red-50 px-2 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
+                  class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-red-800 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600 transition-colors duration-200"
                 >
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  </svg>
                   Return to Dashboard
                 </NuxtLink>
               </div>

@@ -16,24 +16,25 @@
 
       <!-- Page Header -->
       <div class="mb-8">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">Contacts</h1>
-            <p class="mt-2 text-gray-600">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Contacts</h1>
+            <p class="mt-2 text-sm sm:text-base text-gray-600">
               Manage your alumni and mentor network
             </p>
           </div>
           
           <!-- Add New Contact Button -->
-          <div v-if="userStore.isApproved">
+          <div v-if="userStore.isApproved" class="flex-shrink-0">
             <NuxtLink
               to="/contacts/add"
-              class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl shadow-soft text-white bg-gradient-to-r from-aggie-600 to-aggie-700 hover:from-aggie-700 hover:to-aggie-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 transition-all duration-200 hover:shadow-medium group"
+              class="inline-flex items-center justify-center w-full sm:w-auto px-4 sm:px-6 py-3 border border-transparent text-sm font-semibold rounded-xl shadow-soft text-white bg-gradient-to-r from-aggie-600 to-aggie-700 hover:from-aggie-700 hover:to-aggie-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aggie-500 transition-all duration-200 hover:shadow-medium group"
             >
               <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              Add New Contact
+              <span class="hidden sm:inline">Add New Contact</span>
+              <span class="sm:hidden">Add Contact</span>
             </NuxtLink>
           </div>
         </div>

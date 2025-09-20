@@ -122,14 +122,56 @@ export default defineEventHandler(async (event): Promise<DeleteUserResponse> => 
       }
     }
 
-    // Delete user using admin client with service role authentication
+    console.log(`[${requestId}] Target user found: ${targetUser.user.email}`)
+
+    // Handle foreign key constraints by deleting or transferring related data
+    try {
+      // Option 1: Delete all contacts added by this user
+      // This is the safest approach to avoid orphaned data
+      const { error: contactsDeleteError } = await adminSupabase
+        .from('contacts')
+        .delete()
+        .eq('added_by', targetUserId)
+
+      if (contactsDeleteError) {
+        console.error(`[${requestId}] Failed to delete user's contacts:`, contactsDeleteError)
+        return {
+          success: false,
+          error: 'Failed to delete user: Unable to clean up related contacts'
+        }
+      }
+
+      console.log(`[${requestId}] Successfully deleted contacts for user`)
+
+      // Delete user profile if it exists
+      const { error: profileDeleteError } = await adminSupabase
+        .from('user_profiles')
+        .delete()
+        .eq('user_id', targetUserId)
+
+      if (profileDeleteError) {
+        console.warn(`[${requestId}] Failed to delete user profile (non-critical):`, profileDeleteError)
+        // This is non-critical since the CASCADE should handle it
+      }
+
+      console.log(`[${requestId}] Successfully cleaned up user profile`)
+
+    } catch (cleanupError) {
+      console.error(`[${requestId}] Error during cleanup:`, cleanupError)
+      return {
+        success: false,
+        error: 'Failed to delete user: Database cleanup failed'
+      }
+    }
+
+    // Now delete the user from auth
     const { error: deleteError } = await adminSupabase.auth.admin.deleteUser(targetUserId)
 
     if (deleteError) {
-      console.error(`[${requestId}] Failed to delete user:`, deleteError)
+      console.error(`[${requestId}] Failed to delete user from auth:`, deleteError)
       return {
         success: false,
-        error: 'Failed to delete user: Database operation failed'
+        error: 'Failed to delete user: Authentication system error'
       }
     }
 

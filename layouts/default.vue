@@ -5,7 +5,7 @@
     
     <!-- Main Content -->
     <main class="flex-1">
-      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
         <div class="animate-fade-in">
           <slot />
         </div>
@@ -14,27 +14,27 @@
     
     <!-- Footer -->
     <footer class="bg-white/80 backdrop-blur-sm border-t border-gray-200/60 mt-auto">
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-          <p class="text-sm text-gray-600">
+      <div class="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+          <p class="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
             © {{ currentYear }} Aggie Entrepreneurs. All rights reserved.
           </p>
-          <div class="flex space-x-6">
+          <div class="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
             <a 
               href="#" 
-              class="text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
+              class="text-xs sm:text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
             >
               Privacy Policy
             </a>
             <a 
               href="#" 
-              class="text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
+              class="text-xs sm:text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
             >
               Terms of Service
             </a>
             <a 
               href="#" 
-              class="text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
+              class="text-xs sm:text-sm text-gray-500 hover:text-aggie-600 transition-colors duration-200"
             >
               Support
             </a>

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Back Button -->
       <div class="mb-8">
         <button
@@ -41,33 +41,33 @@
       <!-- Profile Content -->
       <div v-else-if="profile" class="bg-white shadow-soft rounded-2xl border border-gray-100/60 overflow-hidden animate-slide-up">
         <!-- Profile Header -->
-        <div class="px-8 py-10 bg-gradient-to-r from-aggie-50/50 to-white border-b border-gray-100/60">
-          <div class="flex items-center space-x-6">
-            <div class="flex-shrink-0">
-              <div class="h-24 w-24 rounded-2xl bg-gradient-to-br from-aggie-100 to-aggie-200 flex items-center justify-center shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105">
-                <span class="text-3xl font-bold text-aggie-700">
+        <div class="px-4 sm:px-8 py-6 sm:py-10 bg-gradient-to-r from-aggie-50/50 to-white border-b border-gray-100/60">
+          <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div class="flex-shrink-0 self-center sm:self-auto">
+              <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl bg-gradient-to-br from-aggie-100 to-aggie-200 flex items-center justify-center shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105">
+                <span class="text-2xl sm:text-3xl font-bold text-aggie-700">
                   {{ getInitials(profile.full_name) }}
                 </span>
               </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ profile.full_name }}</h1>
-              <div class="flex items-center space-x-4 mb-3">
-                <div class="flex items-center space-x-2">
+            <div class="flex-1 min-w-0 text-center sm:text-left">
+              <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ profile.full_name }}</h1>
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-3">
+                <div class="flex items-center justify-center sm:justify-start space-x-2">
                   <div class="w-3 h-3 bg-aggie-500 rounded-full"></div>
-                  <span class="text-base font-semibold text-aggie-700">{{ profile.user_position || 'Member' }}</span>
+                  <span class="text-sm sm:text-base font-semibold text-aggie-700">{{ profile.user_position || 'Member' }}</span>
                 </div>
-                <div class="text-gray-300">•</div>
-                <div class="flex items-center space-x-2">
+                <div class="hidden sm:block text-gray-300">•</div>
+                <div class="flex items-center justify-center sm:justify-start space-x-2">
                   <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a1 1 0 011 1v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8a1 1 0 011-1h3z" />
                   </svg>
-                  <span class="text-sm text-gray-600">
+                  <span class="text-xs sm:text-sm text-gray-600">
                     Member since {{ formatDate(profile.account_created) }}
                   </span>
                 </div>
               </div>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center justify-center sm:justify-start space-x-2">
                 <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span class="text-sm font-medium text-green-600">Active Member</span>
               </div>
@@ -76,14 +76,14 @@
         </div>
 
         <!-- Profile Details -->
-        <div class="px-8 py-8">
-          <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+        <div class="px-4 sm:px-8 py-6 sm:py-8">
+          <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center justify-center sm:justify-start">
             <svg class="w-5 h-5 mr-2 text-aggie-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Contact Information
           </h2>
-          <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <dl class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
             <div class="bg-gray-50/50 rounded-xl p-5 hover:bg-gray-50 transition-colors duration-200">
               <dt class="text-sm font-bold text-gray-700 mb-2 flex items-center">
                 <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
